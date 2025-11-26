@@ -84,6 +84,8 @@ export interface DataField {
   unique?: boolean
   default?: any
   description?: string
+  label?: string
+  options?: string[]
 }
 
 export type FieldType =
