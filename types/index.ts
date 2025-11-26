@@ -22,14 +22,32 @@ export interface NodeData {
   config?: Record<string, any>
 }
 
-// 项目类型
-export interface Project {
+// 工作区类型
+export interface Workspace {
   id: string
   name: string
   description?: string
-  userId: string
+  type: 'personal' | 'team'
+  ownerId: string
+  members?: WorkspaceMember[]
+  settings: WorkspaceSettings
   createdAt: Date
   updatedAt: Date
+}
+
+export interface WorkspaceMember {
+  id: string
+  userId: string
+  workspaceId: string
+  role: 'owner' | 'admin' | 'editor' | 'viewer'
+  joinedAt: Date
+}
+
+export interface WorkspaceSettings {
+  isPublic: boolean
+  allowInvites: boolean
+  defaultComponentVisibility: 'public' | 'private'
+  theme: 'light' | 'dark' | 'auto'
 }
 
 // 流程类型
@@ -50,22 +68,55 @@ export interface Flow {
 }
 
 // 组件类型
-export interface ComponentTemplate {
+export interface Component {
   id: string
   name: string
-  category: string
   description?: string
-  icon?: string
-  props: Record<string, ComponentProp>
-  template: string
-  isPublic: boolean
+  category: string
+  tags: string[]
+  workspaceId: string
+  creatorId: string
+  
+  // 组件内容
+  code: string
+  styles?: string
+  props: ComponentProp[]
+  
+  // 预览和配置
+  previewImage?: string
+  framework: 'react' | 'vue' | 'html'
+  
+  // 版本和状态
+  version: string
+  status: 'draft' | 'published' | 'archived'
+  visibility: 'public' | 'private' | 'workspace'
+  
+  // 统计信息
+  usageCount: number
+  likes: number
+  
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface ComponentProp {
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object'
+  name: string
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'function'
   required?: boolean
   default?: any
   description?: string
+  options?: string[] // 用于枚举类型
+}
+
+export interface ComponentVersion {
+  id: string
+  componentId: string
+  version: string
+  code: string
+  styles?: string
+  changelog?: string
+  createdAt: Date
+  createdBy: string
 }
 
 // 数据模型类型

@@ -1,16 +1,18 @@
 # Flow.io
 
-企业级 ToB Web 低代码实现平台
+智能组件设计与协作平台
 
 ## ✨ 功能特性
 
-- 🎨 **可视化流程编辑器** - 基于 ReactFlow 的强大流程编辑器，支持拖拽式节点连接
-- 📝 **表单设计器** - 可视化表单设计，支持多种字段类型和验证规则
-- 🗄️ **数据模型设计** - 灵活的数据建模工具，可视化数据库结构设计
-- 🔧 **组件库管理** - 可复用的组件模板系统
-- 🚀 **代码生成器** - 一键生成生产级代码（Prisma Schema、TypeScript、Next.js 页面等）
-- 👥 **多用户系统** - 完整的用户认证和项目管理
-- 🔐 **权限管理** - 基于角色的访问控制
+- 🏢 **个人/团队工作区** - 独立的工作空间，支持个人创作和团队协作
+- 🎨 **可视化组件设计器** - 拖拽式组件设计，实时预览和编辑
+- 💻 **集成代码编辑器** - Monaco Editor 提供 VS Code 级别的编辑体验
+- 👀 **实时预览系统** - 支持多设备尺寸的组件预览和交互测试
+- 📦 **组件库管理** - 个人和团队组件库，支持版本管理和分享
+- 🤖 **AI 辅助生成** - 智能组件生成、代码优化和设计建议
+- 🔄 **版本控制** - 组件版本管理，支持回滚和分支
+- 👥 **团队协作** - 实时协作编辑，评论和反馈系统
+- 🚀 **一键导出** - 支持多种格式导出（React、Vue、HTML/CSS）
 
 ## 🛠️ 技术栈
 
@@ -29,11 +31,19 @@
 - **数据库**: PostgreSQL
 - **ORM**: Prisma
 - **认证**: NextAuth.js v5 (Auth.js)
+- **AI 服务**: OpenAI GPT-4 Turbo
 
 ### 开发工具
 - **包管理**: pnpm
 - **代码规范**: ESLint + Prettier
 - **类型检查**: TypeScript
+
+## 📚 文档
+
+- **[开发文档](./DEVELOPMENT.md)** - 详细的开发指南和技术架构
+- **[API 文档](./API.md)** - 完整的 API 接口文档
+- **[部署文档](./DEPLOYMENT.md)** - 生产环境部署指南
+- **[快速开始](./QUICK_START.md)** - 5分钟快速上手指南
 
 ## 📦 快速开始
 
@@ -69,6 +79,9 @@ DATABASE_URL="postgresql://user:password@localhost:5432/flowio?schema=public"
 # NextAuth.js 配置
 NEXTAUTH_SECRET="your-secret-key-change-this-in-production"
 NEXTAUTH_URL="http://localhost:3000"
+
+# OpenAI API 配置 (AI 功能)
+OPENAI_API_KEY="sk-your-openai-api-key-here"
 
 # 应用配置
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
@@ -256,6 +269,8 @@ pnpm db:studio      # 打开 Prisma Studio
 - [x] 表单设计器
 - [x] 数据模型设计
 - [x] 代码生成器
+- [x] AI 辅助生成 (基础功能)
+- [ ] AI 功能完善 (进行中)
 - [ ] 部署与导出功能
 - [ ] 组件库管理
 - [ ] 协作功能

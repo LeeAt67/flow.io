@@ -30,22 +30,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 仪表板
               </Button>
             </Link>
-            <Link href="/dashboard/projects">
+            <Link href="/dashboard/workspaces">
               <Button variant="ghost" className="w-full justify-start">
                 <FolderOpen className="mr-2 h-4 w-4" />
-                项目管理
-              </Button>
-            </Link>
-            <Link href="/dashboard/forms">
-              <Button variant="ghost" className="w-full justify-start">
-                <FileText className="mr-2 h-4 w-4" />
-                表单设计器
-              </Button>
-            </Link>
-            <Link href="/dashboard/data-models">
-              <Button variant="ghost" className="w-full justify-start">
-                <Database className="mr-2 h-4 w-4" />
-                数据模型
+                我的工作区
               </Button>
             </Link>
             <Link href="/dashboard/ai-assistant">
@@ -60,10 +48,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 代码生成器
               </Button>
             </Link>
-            <Link href="/dashboard/export">
+            <Link href="/dashboard/settings">
               <Button variant="ghost" className="w-full justify-start">
-                <Download className="mr-2 h-4 w-4" />
-                导出项目
+                <Database className="mr-2 h-4 w-4" />
+                项目设置
               </Button>
             </Link>
           </nav>

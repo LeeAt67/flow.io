@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Code2, Download, FileCode, Copy, Sparkles, Plus, X } from 'lucide-react'
+import { Code2, Download, FileCode, Copy, Sparkles, Plus, X, Edit } from 'lucide-react'
+import { CodeEditor } from '@/components/code-editor/code-editor'
+import { CodePreview } from '@/components/code-editor/code-preview'
 import { 
   generateReadyToUseForm, 
   generateReadyToUseTable, 
@@ -29,6 +31,8 @@ export default function CodeGeneratorPage() {
   const [fields, setFields] = useState<ComponentField[]>([])
   const [generatedComponents, setGeneratedComponents] = useState<GeneratedComponent[]>([])
   const [selectedComponent, setSelectedComponent] = useState<GeneratedComponent | null>(null)
+  const [editingComponent, setEditingComponent] = useState<GeneratedComponent | null>(null)
+  const [showPreview, setShowPreview] = useState(true)
   const [newField, setNewField] = useState<ComponentField>({
     name: '',
     type: 'string',
@@ -139,6 +143,41 @@ export default function CodeGeneratorPage() {
     })
   }
 
+  const handleEditComponent = (component: GeneratedComponent) => {
+    setEditingComponent(component)
+    toast({
+      title: '进入编辑模式',
+      description: `正在编辑 ${component.name}`,
+    })
+  }
+
+  const handleCodeChange = (newCode: string) => {
+    if (editingComponent) {
+      setEditingComponent({
+        ...editingComponent,
+        code: newCode
+      })
+      
+      // 同步更新到生成的组件列表
+      setGeneratedComponents(prev => 
+        prev.map(comp => 
+          comp.name === editingComponent.name 
+            ? { ...comp, code: newCode }
+            : comp
+        )
+      )
+    }
+  }
+
+  const getLanguageFromFileName = (fileName: string) => {
+    if (fileName.endsWith('.tsx')) return 'typescript'
+    if (fileName.endsWith('.ts')) return 'typescript'
+    if (fileName.endsWith('.jsx')) return 'javascript'
+    if (fileName.endsWith('.js')) return 'javascript'
+    if (fileName.endsWith('.json')) return 'json'
+    return 'typescript'
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -161,6 +200,10 @@ export default function CodeGeneratorPage() {
         <TabsList>
           <TabsTrigger value="generator">组件生成器</TabsTrigger>
           <TabsTrigger value="preview">代码预览</TabsTrigger>
+          <TabsTrigger value="editor" disabled={!editingComponent}>
+            <Edit className="mr-1 h-4 w-4" />
+            代码编辑器
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="generator" className="space-y-6">
@@ -302,6 +345,13 @@ export default function CodeGeneratorPage() {
                           <Button
                             size="sm"
                             variant="outline"
+                            onClick={() => handleEditComponent(component)}
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => handleCopy(component.code)}
                           >
                             <Copy className="h-3 w-3" />
@@ -410,6 +460,41 @@ export default function CodeGeneratorPage() {
                   <Code2 className="mb-4 h-16 w-16" />
                   <p>还没有生成代码</p>
                   <p className="text-sm">请先在组件生成器中配置并生成代码</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="editor" className="space-y-4">
+          {editingComponent ? (
+            <div className="grid gap-6 lg:grid-cols-2 h-[800px]">
+              {/* 左侧代码编辑器 */}
+              <CodeEditor
+                initialCode={editingComponent.code}
+                language={getLanguageFromFileName(editingComponent.name)}
+                fileName={editingComponent.name}
+                onCodeChange={handleCodeChange}
+                showPreview={showPreview}
+                onTogglePreview={() => setShowPreview(!showPreview)}
+              />
+
+              {/* 右侧预览区域 */}
+              {showPreview && (
+                <CodePreview
+                  code={editingComponent.code}
+                  language={getLanguageFromFileName(editingComponent.name)}
+                  fileName={editingComponent.name}
+                />
+              )}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-16">
+                <div className="flex flex-col items-center justify-center text-muted-foreground">
+                  <Edit className="mb-4 h-16 w-16" />
+                  <p>选择一个组件开始编辑</p>
+                  <p className="text-sm">在生成结果中点击编辑按钮</p>
                 </div>
               </CardContent>
             </Card>

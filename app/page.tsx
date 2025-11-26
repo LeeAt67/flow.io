@@ -55,17 +55,18 @@ export default function HomePage() {
               </span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-semibold tracking-tight text-black dark:text-white mb-6 leading-none">
-              企业级
-              <br />
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                低代码平台
-              </span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto font-light leading-relaxed">
-              通过直观的可视化界面，让任何人都能轻松构建企业级应用。
-            </p>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
+                智能组件设计
+                <br />
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  与协作平台
+                </span>
+              </h1>
+              <p className="mx-auto mt-6 max-w-[700px] text-lg text-muted-foreground md:text-xl">
+                个人和团队工作区，可视化组件设计器，实时代码编辑预览，打造你的专属组件库
+              </p>
+            </div>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Link href="/dashboard" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-medium transition-all duration-200 hover:scale-105">
