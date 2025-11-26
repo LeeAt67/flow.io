@@ -7,7 +7,7 @@ import { NodePalette } from '@/components/flow/node-palette'
 import { NodeInspector } from '@/components/flow/node-inspector'
 import { useFlowStore } from '@/store/flow-store'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Save } from 'lucide-react'
+import { ArrowLeft, Save, Sparkles } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 
@@ -97,6 +97,12 @@ export default function EditorPage() {
           </div>
         </div>
         <div className="flex gap-2">
+          <Button size="sm" variant="outline" asChild>
+            <Link href="/dashboard/ai-assistant">
+              <Sparkles className="mr-2 h-4 w-4" />
+              AI 助手
+            </Link>
+          </Button>
           <Button size="sm" onClick={handleSave}>
             <Save className="mr-2 h-4 w-4" />
             保存

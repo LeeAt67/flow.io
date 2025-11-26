@@ -2,7 +2,7 @@ import { auth, signOut } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Workflow, LayoutDashboard, FolderOpen, Package, Database, LogOut, User, Code2, Download, FileText } from 'lucide-react'
+import { Workflow, LayoutDashboard, FolderOpen, Package, Database, LogOut, User, Code2, Download, FileText, Sparkles } from 'lucide-react'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
@@ -46,6 +46,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <Button variant="ghost" className="w-full justify-start">
                 <Database className="mr-2 h-4 w-4" />
                 数据模型
+              </Button>
+            </Link>
+            <Link href="/dashboard/ai-assistant">
+              <Button variant="ghost" className="w-full justify-start">
+                <Sparkles className="mr-2 h-4 w-4" />
+                AI 助手
               </Button>
             </Link>
             <Link href="/dashboard/code-generator">
