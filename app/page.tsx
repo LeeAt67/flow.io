@@ -1,169 +1,285 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Code2, Database, Layers, Workflow } from 'lucide-react'
+import { 
+  ArrowRight, 
+  Code2, 
+  Database, 
+  Workflow, 
+  Star,
+  Play,
+  ChevronRight,
+  Globe,
+  Monitor
+} from 'lucide-react'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
-      {/* 导航栏 */}
-      <nav className="border-b bg-white/50 backdrop-blur-sm dark:bg-gray-900/50">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <Workflow className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Flow.io</span>
-          </div>
-          <div className="flex gap-4">
-            <Button variant="ghost" asChild>
-              <Link href="/login">登录</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/register">注册</Link>
-            </Button>
+    <div className="min-h-screen bg-white dark:bg-black">
+      {/* Apple风格导航栏 */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/20 dark:bg-black/80 dark:border-gray-800/20">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex items-center justify-between h-11">
+            <div className="flex items-center">
+              <Link href="/" className="flex items-center gap-2 text-black dark:text-white">
+                <Workflow className="h-5 w-5" />
+                <span className="text-lg font-medium">Flow.io</span>
+              </Link>
+            </div>
+            <div className="hidden md:flex items-center gap-8 text-sm">
+              <Link href="/features" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">功能</Link>
+              <Link href="/pricing" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">价格</Link>
+              <Link href="/docs" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">文档</Link>
+              <Link href="/support" className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">支持</Link>
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/login" className="text-sm text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">
+                登录
+              </Link>
+              <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-1.5 rounded-full transition-colors">
+                免费试用
+              </Link>
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* 主要内容 */}
-      <main className="container mx-auto px-4 py-16">
-        {/* Hero Section */}
-        <div className="mb-20 text-center">
-          <h1 className="mb-6 text-5xl font-bold tracking-tight">
-            企业级 ToB Web
-            <br />
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              低代码实现平台
-            </span>
-          </h1>
-          <p className="mb-8 text-xl text-muted-foreground">
-            可视化流程编辑 · 表单设计 · 数据建模 · 代码生成
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button size="lg" asChild>
-              <Link href="/dashboard">
-                开始使用
-                <ArrowRight className="ml-2 h-4 w-4" />
+      {/* Apple风格主内容 */}
+      <main>
+        {/* Hero Section - Apple风格 */}
+        <section className="pt-20 pb-16 px-6">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="mb-4">
+              <span className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 font-medium">
+                <Star className="h-4 w-4" />
+                全新发布
+              </span>
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-semibold tracking-tight text-black dark:text-white mb-6 leading-none">
+              企业级
+              <br />
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                低代码平台
+              </span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto font-light leading-relaxed">
+              通过直观的可视化界面，让任何人都能轻松构建企业级应用。
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+              <Link href="/dashboard" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-medium transition-all duration-200 hover:scale-105">
+                免费开始使用
               </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/docs">查看文档</Link>
-            </Button>
+              <Link href="/demo" className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-lg font-medium transition-colors">
+                <Play className="h-5 w-5" />
+                观看演示
+              </Link>
+            </div>
+            
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              支持所有主流浏览器 · 无需安装 · 即即使用
+            </div>
           </div>
-        </div>
-
-        {/* 功能特性 */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader>
-              <Workflow className="mb-2 h-8 w-8 text-primary" />
-              <CardTitle>可视化编辑器</CardTitle>
-              <CardDescription>基于 ReactFlow 的强大流程编辑器</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                拖拽式节点连接，直观的流程设计，支持多种节点类型和自定义配置
+        </section>
+        
+        {/* 产品展示区域 */}
+        <section className="py-20 px-6 bg-gray-50 dark:bg-gray-900">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white mb-4">
+                为企业而生
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                从流程设计到代码部署，一站式解决方案
               </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <Layers className="mb-2 h-8 w-8 text-primary" />
-              <CardTitle>组件库管理</CardTitle>
-              <CardDescription>可复用的组件模板系统</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                预置丰富的组件库，支持自定义组件，快速构建企业应用
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <Database className="mb-2 h-8 w-8 text-primary" />
-              <CardTitle>数据模型设计</CardTitle>
-              <CardDescription>灵活的数据建模工具</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                可视化数据表设计，自动生成 Prisma Schema，支持关联关系
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <Code2 className="mb-2 h-8 w-8 text-primary" />
-              <CardTitle>代码生成</CardTitle>
-              <CardDescription>一键生成生产级代码</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                基于最佳实践的代码模板，生成 Next.js + TypeScript 应用
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* 技术栈 */}
-        <div className="mt-20">
-          <h2 className="mb-8 text-center text-3xl font-bold">技术栈</h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle>前端</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Next.js 15 + React 19</li>
-                  <li>• TypeScript 5</li>
-                  <li>• ReactFlow 12</li>
-                  <li>• Tailwind CSS 4</li>
-                  <li>• shadcn/ui</li>
-                  <li>• Zustand</li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>后端</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Next.js API Routes</li>
-                  <li>• Server Actions</li>
-                  <li>• PostgreSQL</li>
-                  <li>• Prisma ORM</li>
-                  <li>• NextAuth.js v5</li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>开发工具</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• pnpm</li>
-                  <li>• ESLint + Prettier</li>
-                  <li>• React Hook Form</li>
-                  <li>• Zod</li>
-                  <li>• Lucide Icons</li>
-                </ul>
-              </CardContent>
-            </Card>
+            </div>
+            
+            {/* 产品特性展示 */}
+            <div className="grid md:grid-cols-2 gap-16 items-center mb-20">
+              <div>
+                <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-2xl flex items-center justify-center mb-6">
+                  <Workflow className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-3xl font-semibold text-black dark:text-white mb-4">
+                  可视化流程编辑
+                </h3>
+                <p className="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                  拖拽式节点连接，直观的流程设计。支持多种节点类型，让复杂的业务逻辑变得简单明了。
+                </p>
+                <Link href="/features/workflow" className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                  了解更多
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl">
+                <div className="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 rounded-2xl flex items-center justify-center">
+                  <div className="text-gray-400 dark:text-gray-500">
+                    [流程编辑器预览图]
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-16 items-center mb-20">
+              <div className="md:order-2">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-2xl flex items-center justify-center mb-6">
+                  <Database className="h-8 w-8 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-3xl font-semibold text-black dark:text-white mb-4">
+                  智能数据建模
+                </h3>
+                <p className="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                  可视化数据表设计，自动生成 Prisma Schema。支持复杂关联关系，让数据建模变得简单高效。
+                </p>
+                <Link href="/features/database" className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                  了解更多
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
+              <div className="md:order-1 bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl">
+                <div className="aspect-video bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900 dark:to-blue-900 rounded-2xl flex items-center justify-center">
+                  <div className="text-gray-400 dark:text-gray-500">
+                    [数据建模工具预览图]
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+              <div>
+                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-2xl flex items-center justify-center mb-6">
+                  <Code2 className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                </div>
+                <h3 className="text-3xl font-semibold text-black dark:text-white mb-4">
+                  一键代码生成
+                </h3>
+                <p className="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                  基于最佳实践的代码模板，生成生产级 Next.js + TypeScript 应用。无需手写代码，即可拥有专业的Web应用。
+                </p>
+                <Link href="/features/codegen" className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                  了解更多
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl">
+                <div className="aspect-video bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-2xl flex items-center justify-center">
+                  <div className="text-gray-400 dark:text-gray-500">
+                    [代码生成器预览图]
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* Apple风格技术栈 */}
+        <section className="py-20 px-6">
+          <div className="max-w-6xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-semibold text-black dark:text-white mb-4">
+              现代化技术栈
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
+              采用最新的技术栈，保证项目的可维护性和扩展性
+            </p>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <Monitor className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-black dark:text-white mb-3">前端</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Next.js 15 · React 19 · TypeScript · Tailwind CSS
+                </p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <Database className="h-10 w-10 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-black dark:text-white mb-3">后端</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  PostgreSQL · Prisma ORM · NextAuth.js · API Routes
+                </p>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <Globe className="h-10 w-10 text-purple-600 dark:text-purple-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-black dark:text-white mb-3">部署</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Vercel · Docker · CI/CD · 云原生架构
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>&copy; 2025 Flow.io. All rights reserved.</p>
+      {/* Apple风格Footer */}
+      <footer className="py-12 px-6 border-t border-gray-200 dark:border-gray-800">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-flex items-center gap-2 text-black dark:text-white mb-4">
+              <Workflow className="h-6 w-6" />
+              <span className="text-xl font-medium">Flow.io</span>
+            </Link>
+            <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+              专为企业打造的低代码平台，让复杂的业务流程变得简单易懂。
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h3 className="font-medium text-black dark:text-white mb-3">产品</h3>
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li><Link href="/features" className="hover:text-black dark:hover:text-white transition-colors">功能特性</Link></li>
+                <li><Link href="/pricing" className="hover:text-black dark:hover:text-white transition-colors">价格方案</Link></li>
+                <li><Link href="/enterprise" className="hover:text-black dark:hover:text-white transition-colors">企业版</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-black dark:text-white mb-3">开发者</h3>
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li><Link href="/docs" className="hover:text-black dark:hover:text-white transition-colors">开发文档</Link></li>
+                <li><Link href="/api" className="hover:text-black dark:hover:text-white transition-colors">API 参考</Link></li>
+                <li><Link href="/github" className="hover:text-black dark:hover:text-white transition-colors">GitHub</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-black dark:text-white mb-3">支持</h3>
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li><Link href="/help" className="hover:text-black dark:hover:text-white transition-colors">帮助中心</Link></li>
+                <li><Link href="/contact" className="hover:text-black dark:hover:text-white transition-colors">联系我们</Link></li>
+                <li><Link href="/status" className="hover:text-black dark:hover:text-white transition-colors">系统状态</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-medium text-black dark:text-white mb-3">公司</h3>
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li><Link href="/about" className="hover:text-black dark:hover:text-white transition-colors">关于我们</Link></li>
+                <li><Link href="/blog" className="hover:text-black dark:hover:text-white transition-colors">博客</Link></li>
+                <li><Link href="/careers" className="hover:text-black dark:hover:text-white transition-colors">招聘</Link></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-200 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              © 2025 Flow.io. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
+              <Link href="/privacy" className="hover:text-black dark:hover:text-white transition-colors">隐私政策</Link>
+              <Link href="/terms" className="hover:text-black dark:hover:text-white transition-colors">服务条款</Link>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   )
 }
-

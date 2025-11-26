@@ -51,31 +51,83 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
 /* ReactFlow 自定义样式 */
 .react-flow__node {
-  @apply rounded-lg border-2 shadow-md;
+  border-radius: 0.5rem;
+  border-width: 2px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .react-flow__node.selected {
-  @apply border-primary;
+  border-color: hsl(var(--primary));
 }
 
 .react-flow__handle {
-  @apply h-3 w-3 rounded-full border-2 bg-white;
+  height: 0.75rem;
+  width: 0.75rem;
+  border-radius: 9999px;
+  border-width: 2px;
+  background-color: white;
 }
 
 .react-flow__edge-path {
-  @apply stroke-2;
+  stroke-width: 2;
 }
 
 .react-flow__edge.selected .react-flow__edge-path {
-  @apply stroke-primary;
+  stroke: hsl(var(--primary));
+}
+
+/* 自定义动画 */
+@keyframes gradient {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
 }
 
