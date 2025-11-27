@@ -110,20 +110,50 @@ model Flow {
 
 // 组件库
 model Component {
-  id          String        @id @default(cuid())
-  name        String
-  category    String
-  description String?
-  icon        String?
-  props       Json          @default("{}")
-  template    String        @db.Text
-  userId      String
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  isPublic    Boolean       @default(false)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id            String              @id @default(cuid())
+  name          String
+  category      String
+  description   String?
+  framework     ComponentFramework  @default(REACT)
+  status        ComponentStatus     @default(DRAFT)
+  visibility    ComponentVisibility @default(PRIVATE)
+  version       String              @default("1.0.0")
+  downloads     Int                 @default(0)
+  likes         Int                 @default(0)
+  views         Int                 @default(0)
+  tags          String[]            @default([])
+  code          String              @db.Text
+  documentation String?             @db.Text
+  preview       String?
+  icon          String?
+  props         Json                @default("{}")
+  template      String?             @db.Text
+  userId        String
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isPublic      Boolean             @default(false) // 保持向后兼容
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 
+  @@unique([name, userId]) // 同一用户下组件名称唯一
   @@map("components")
+}
+
+enum ComponentFramework {
+  REACT
+  VUE
+  ANGULAR
+}
+
+enum ComponentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ComponentVisibility {
+  PRIVATE
+  PUBLIC
+  TEAM
 }
 
 // 数据模型

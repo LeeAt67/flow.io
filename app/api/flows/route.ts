@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 
+// GET /api/flows - 获取流程列表
 export async function GET(request: NextRequest) {
-  const session = await auth()
-
-  if (!session?.user) {
-    return NextResponse.json({ error: '未授权' }, { status: 401 })
-  }
-
   try {
+    const session = await auth()
+    if (!session?.user) {
+      return NextResponse.json({ error: '未授权访问' }, { status: 401 })
+    }
+
     const { searchParams } = new URL(request.url)
     const projectId = searchParams.get('projectId')
 
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
       where.projectId = projectId
     } else {
-      // 如果没有指定项目，获取用户所有项目的数据模型
+      // 如果没有指定项目，获取用户所有项目的流程
       const userProjects = await db.project.findMany({
         where: { userId: session.user.id },
         select: { id: true },
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const dataModels = await db.dataModel.findMany({
+    const flows = await db.flow.findMany({
       where,
       include: {
         project: {
@@ -57,14 +57,17 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(dataModels)
+    return NextResponse.json(flows)
   } catch (error) {
-    console.error('获取数据模型列表失败:', error)
-    return NextResponse.json({ error: '获取数据模型列表失败' }, { status: 500 })
+    console.error('获取流程列表失败:', error)
+    return NextResponse.json(
+      { error: '获取流程列表失败' },
+      { status: 500 }
+    )
   }
 }
 
-// POST /api/data-models - 创建数据模型
+// POST /api/flows - 创建流程
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
@@ -73,12 +76,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, description, projectId, fields = [] } = body
+    const { name, description, projectId, nodes = [], edges = [], viewport } = body
 
     // 验证必填字段
     if (!name || !projectId) {
       return NextResponse.json(
-        { error: '数据模型名称和项目ID不能为空' },
+        { error: '流程名称和项目ID不能为空' },
         { status: 400 }
       )
     }
@@ -98,28 +101,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 检查数据模型名称是否在项目中已存在
-    const existingDataModel = await db.dataModel.findFirst({
+    // 检查流程名称是否在项目中已存在
+    const existingFlow = await db.flow.findFirst({
       where: {
         name,
         projectId,
       },
     })
 
-    if (existingDataModel) {
+    if (existingFlow) {
       return NextResponse.json(
-        { error: '数据模型名称在该项目中已存在' },
+        { error: '流程名称在该项目中已存在' },
         { status: 400 }
       )
     }
 
-    // 创建数据模型
-    const dataModel = await db.dataModel.create({
+    // 创建流程
+    const flow = await db.flow.create({
       data: {
         name,
         description,
         projectId,
-        fields,
+        nodes,
+        edges,
+        viewport,
       },
       include: {
         project: {
@@ -131,11 +136,11 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(dataModel, { status: 201 })
+    return NextResponse.json(flow, { status: 201 })
   } catch (error) {
-    console.error('创建数据模型失败:', error)
+    console.error('创建流程失败:', error)
     return NextResponse.json(
-      { error: '创建数据模型失败' },
+      { error: '创建流程失败' },
       { status: 500 }
     )
   }

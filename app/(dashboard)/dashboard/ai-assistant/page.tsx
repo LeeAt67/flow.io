@@ -15,15 +15,15 @@ export const metadata: Metadata = {
 
 export default function AIAssistantPage() {
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+    <div className="h-full flex flex-col space-y-6 overflow-y-auto">
       <div className="flex items-center justify-between space-y-2">
         <div>
           <h2 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Sparkles className="h-8 w-8 text-purple-500" />
-            AI 智能助手
+            AI 工具中心
           </h2>
           <p className="text-muted-foreground">
-            利用人工智能技术，快速生成流程图、表单、优化代码和获得专业建议
+            利用人工智能技术，快速生成业务流程、表单设计、代码优化和专业咨询
           </p>
         </div>
         <Badge variant="secondary" className="text-sm">

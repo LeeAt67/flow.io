@@ -20,6 +20,8 @@ export interface NodeData {
   label: string
   description?: string
   config?: Record<string, any>
+  // 添加索引签名以兼容 Record<string, unknown>
+  [key: string]: unknown
 }
 
 // 工作区类型

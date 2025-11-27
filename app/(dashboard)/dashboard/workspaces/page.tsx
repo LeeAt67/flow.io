@@ -176,7 +176,7 @@ export default function WorkspacesPage() {
   )
 
   return (
-    <div className="space-y-8">
+    <div className="h-full flex flex-col space-y-6 overflow-y-auto">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">工作区</h1>

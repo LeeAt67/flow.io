@@ -57,7 +57,7 @@ export default function HomePage() {
             
             <div className="text-center">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-                智能组件设计
+                AI组件设计
                 <br />
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   与协作平台

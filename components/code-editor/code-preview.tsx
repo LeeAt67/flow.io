@@ -14,7 +14,15 @@ import {
   ExternalLink,
   Smartphone,
   Tablet,
-  Monitor
+  Monitor,
+  Play,
+  Pause,
+  RotateCcw,
+  Download,
+  Share,
+  Zap,
+  Activity,
+  Clock
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
@@ -22,17 +30,23 @@ interface CodePreviewProps {
   code: string
   language: string
   fileName: string
+  aiAssistant?: React.ReactNode
 }
 
-export function CodePreview({ code, language, fileName }: CodePreviewProps) {
+export function CodePreview({ code, language, fileName, aiAssistant }: CodePreviewProps) {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
   const [isValidCode, setIsValidCode] = useState(true)
+  const [isLivePreview, setIsLivePreview] = useState(true)
+  const [renderTime, setRenderTime] = useState(0)
+  const [isInteractive, setIsInteractive] = useState(true)
   const [codeAnalysis, setCodeAnalysis] = useState<{
     lines: number
     functions: number
     components: number
     imports: number
     exports: number
+    complexity: number
+    performance: 'good' | 'medium' | 'poor'
   } | null>(null)
   const { toast } = useToast()
 
@@ -45,11 +59,17 @@ export function CodePreview({ code, language, fileName }: CodePreviewProps) {
     const components = (code.match(/export\s+(function|const)\s+[A-Z]\w*/g) || []).length
     const imports = (code.match(/^import\s+/gm) || []).length
     const exports = (code.match(/^export\s+/gm) || []).length
+    
+    // 计算代码复杂度
+    const complexity = Math.min(10, Math.floor((functions * 2 + components * 3 + lines * 0.1)))
+    const performance: 'good' | 'medium' | 'poor' = complexity <= 3 ? 'good' : complexity <= 6 ? 'medium' : 'poor'
 
-    return { lines, functions, components, imports, exports }
+    return { lines, functions, components, imports, exports, complexity, performance }
   }, [code])
 
   useEffect(() => {
+    const startTime = performance.now()
+    
     setCodeAnalysis(analyzeCode)
     
     // 简单的代码验证
@@ -59,8 +79,13 @@ export function CodePreview({ code, language, fileName }: CodePreviewProps) {
       const hasUnmatchedParens = (code.match(/\(/g) || []).length !== (code.match(/\)/g) || []).length
       
       setIsValidCode(!hasUnmatchedBrackets && !hasUnmatchedParens)
+      
+      // 计算渲染时间
+      const endTime = performance.now()
+      setRenderTime(Math.round(endTime - startTime))
     } catch (error) {
       setIsValidCode(false)
+      setRenderTime(0)
     }
   }, [code, analyzeCode])
 
@@ -206,109 +231,203 @@ export function CodePreview({ code, language, fileName }: CodePreviewProps) {
   }
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-3">
+    <Card className="h-full border-0 shadow-none flex flex-col">
+      <CardHeader className="pb-1 px-4 py-2 border-b border-gray-100 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-lg">预览</CardTitle>
-            <Badge variant={isValidCode ? 'default' : 'destructive'} className="text-xs">
-              {isValidCode ? '有效' : '错误'}
-            </Badge>
+          <div className="flex items-center gap-3">
+            <h3 className="font-medium text-gray-900">预览</h3>
+            <div className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${isValidCode ? 'bg-green-400' : 'bg-red-400'}`}></span>
+              <span className="text-xs text-gray-500">
+                {isValidCode ? '正常' : '错误'}
+              </span>
+              {renderTime > 0 && (
+                <span className="text-xs text-gray-500">
+                  {renderTime}ms
+                </span>
+              )}
+            </div>
           </div>
           
           <div className="flex items-center gap-1">
+            {/* 设备预览模式 */}
+            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+              <Button 
+                size="sm" 
+                variant="ghost"
+                onClick={() => setPreviewMode('desktop')}
+                className={`rounded-none px-2 ${previewMode === 'desktop' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                <Monitor className="h-4 w-4" />
+              </Button>
+              <Button 
+                size="sm" 
+                variant="ghost"
+                onClick={() => setPreviewMode('tablet')}
+                className={`rounded-none border-l px-2 ${previewMode === 'tablet' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                <Tablet className="h-4 w-4" />
+              </Button>
+              <Button 
+                size="sm" 
+                variant="ghost"
+                onClick={() => setPreviewMode('mobile')}
+                className={`rounded-none border-l px-2 ${previewMode === 'mobile' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                <Smartphone className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            {/* 刷新 */}
             <Button 
               size="sm" 
-              variant={previewMode === 'desktop' ? 'default' : 'ghost'}
-              onClick={() => setPreviewMode('desktop')}
+              variant="ghost" 
+              onClick={() => window.location.reload()}
+              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             >
-              <Monitor className="h-4 w-4" />
-            </Button>
-            <Button 
-              size="sm" 
-              variant={previewMode === 'tablet' ? 'default' : 'ghost'}
-              onClick={() => setPreviewMode('tablet')}
-            >
-              <Tablet className="h-4 w-4" />
-            </Button>
-            <Button 
-              size="sm" 
-              variant={previewMode === 'mobile' ? 'default' : 'ghost'}
-              onClick={() => setPreviewMode('mobile')}
-            >
-              <Smartphone className="h-4 w-4" />
+              <RefreshCw className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="p-0">
-        <Tabs defaultValue="preview" className="h-full">
-          <div className="px-4 pb-2">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="preview">可视化预览</TabsTrigger>
-              <TabsTrigger value="analysis">代码分析</TabsTrigger>
+      <CardContent className="p-0 flex-1 flex flex-col">
+        <Tabs defaultValue="preview" className="h-full flex flex-col">
+          <div className="px-4 pb-1 flex-shrink-0">
+            <TabsList className="grid w-full grid-cols-3 h-8">
+              <TabsTrigger value="preview" className="text-xs">可视化预览</TabsTrigger>
+              <TabsTrigger value="ai-assistant" className="text-xs">AI助手</TabsTrigger>
+              <TabsTrigger value="analysis" className="text-xs">代码分析</TabsTrigger>
             </TabsList>
           </div>
           
-          <TabsContent value="preview" className="mt-0 p-4">
-            <div className="min-h-[500px] bg-gray-50 rounded-lg p-4">
+          <TabsContent value="preview" className="mt-0 p-4 flex-1">
+            <div className="h-full bg-gray-50 rounded-lg p-4">
               {renderComponentPreview()}
             </div>
           </TabsContent>
           
-          <TabsContent value="analysis" className="mt-0 p-4">
-            <div className="space-y-4">
+          <TabsContent value="ai-assistant" className="mt-0 p-0 flex-1">
+            {aiAssistant}
+          </TabsContent>
+          
+          <TabsContent value="analysis" className="mt-0 p-4 flex-1 overflow-y-auto">
+            <div className="space-y-6">
+              {/* 基础统计 */}
               {codeAnalysis && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">{codeAnalysis.lines}</div>
-                    <div className="text-sm text-blue-600">代码行数</div>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">{codeAnalysis.components}</div>
-                    <div className="text-sm text-green-600">组件数量</div>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">{codeAnalysis.functions}</div>
-                    <div className="text-sm text-purple-600">函数数量</div>
-                  </div>
-                  <div className="text-center p-4 bg-orange-50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">{codeAnalysis.imports}</div>
-                    <div className="text-sm text-orange-600">导入模块</div>
-                  </div>
-                  <div className="text-center p-4 bg-red-50 rounded-lg">
-                    <div className="text-2xl font-bold text-red-600">{codeAnalysis.exports}</div>
-                    <div className="text-sm text-red-600">导出模块</div>
+                <div>
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <Activity className="h-4 w-4" />
+                    代码统计
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg border">
+                      <div className="text-2xl font-bold text-blue-600">{codeAnalysis.lines}</div>
+                      <div className="text-sm text-blue-600">代码行数</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 rounded-lg border">
+                      <div className="text-2xl font-bold text-green-600">{codeAnalysis.components}</div>
+                      <div className="text-sm text-green-600">组件数量</div>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg border">
+                      <div className="text-2xl font-bold text-purple-600">{codeAnalysis.functions}</div>
+                      <div className="text-sm text-purple-600">函数数量</div>
+                    </div>
+                    <div className="text-center p-4 bg-orange-50 rounded-lg border">
+                      <div className="text-2xl font-bold text-orange-600">{codeAnalysis.imports}</div>
+                      <div className="text-sm text-orange-600">导入模块</div>
+                    </div>
+                    <div className="text-center p-4 bg-red-50 rounded-lg border">
+                      <div className="text-2xl font-bold text-red-600">{codeAnalysis.exports}</div>
+                      <div className="text-sm text-red-600">导出模块</div>
+                    </div>
+                    <div className="text-center p-4 bg-yellow-50 rounded-lg border">
+                      <div className="text-2xl font-bold text-yellow-600">{codeAnalysis.complexity}/10</div>
+                      <div className="text-sm text-yellow-600">复杂度</div>
+                    </div>
                   </div>
                 </div>
               )}
               
-              <div className="space-y-3">
-                <h4 className="font-medium">代码质量检查</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">语法结构正确</span>
+              {/* 性能分析 */}
+              <div>
+                <h4 className="font-medium mb-3 flex items-center gap-2">
+                  <Zap className="h-4 w-4" />
+                  性能分析
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-gray-50 rounded-lg border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">渲染时间</span>
+                      <Badge variant="outline">{renderTime}ms</Badge>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full ${renderTime < 50 ? 'bg-green-500' : renderTime < 100 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                        style={{ width: `${Math.min(100, (renderTime / 200) * 100)}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">导入导出规范</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">TypeScript 类型安全</span>
+                  <div className="p-4 bg-gray-50 rounded-lg border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">代码质量</span>
+                      <Badge variant={codeAnalysis?.performance === 'good' ? 'default' : 
+                                   codeAnalysis?.performance === 'medium' ? 'secondary' : 'destructive'}>
+                        {codeAnalysis?.performance === 'good' ? '优秀' : 
+                         codeAnalysis?.performance === 'medium' ? '良好' : '需改进'}
+                      </Badge>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full ${codeAnalysis?.performance === 'good' ? 'bg-green-500' : 
+                                   codeAnalysis?.performance === 'medium' ? 'bg-yellow-500' : 'bg-red-500'}`}
+                        style={{ width: `${codeAnalysis?.performance === 'good' ? 90 : 
+                                        codeAnalysis?.performance === 'medium' ? 60 : 30}%` }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </div>
+              
+              {/* 代码质量检查 */}
+              <div>
+                <h4 className="font-medium mb-3 flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  质量检查
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 p-2 bg-green-50 rounded border">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">语法结构正确</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 bg-green-50 rounded border">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">导入导出规范</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 bg-green-50 rounded border">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">TypeScript 类型安全</span>
+                  </div>
+                  {codeAnalysis && codeAnalysis.complexity > 7 && (
+                    <div className="flex items-center gap-2 p-2 bg-yellow-50 rounded border">
+                      <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                      <span className="text-sm">代码复杂度较高，建议重构</span>
+                    </div>
+                  )}
+                </div>
+              </div>
 
-              <div className="space-y-3">
-                <h4 className="font-medium">使用建议</h4>
-                <div className="text-sm text-muted-foreground space-y-1">
+              {/* 优化建议 */}
+              <div>
+                <h4 className="font-medium mb-3">优化建议</h4>
+                <div className="text-sm text-muted-foreground space-y-2 bg-gray-50 p-4 rounded-lg border">
                   <p>• 代码已经过优化，可以直接复制使用</p>
                   <p>• 确保项目中已安装所需的依赖包</p>
                   <p>• 根据实际需求调整样式和逻辑</p>
                   <p>• 建议进行单元测试验证功能</p>
+                  {codeAnalysis && codeAnalysis.performance === 'poor' && (
+                    <p className="text-yellow-600">• 考虑拆分复杂组件以提高可维护性</p>
+                  )}
                 </div>
               </div>
             </div>

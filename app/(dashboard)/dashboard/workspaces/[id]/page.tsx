@@ -29,6 +29,7 @@ import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 import { CodeEditor } from '@/components/code-editor/code-editor'
 import { CodePreview } from '@/components/code-editor/code-preview'
+import { AIAssistant } from '@/components/ai/ai-assistant'
 
 interface ComponentData {
   id: string
@@ -56,7 +57,25 @@ export default function WorkspaceDetailPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedComponent, setSelectedComponent] = useState<ComponentData | null>(null)
   const [isDesigning, setIsDesigning] = useState(false)
+  const [showRightPanel, setShowRightPanel] = useState(true)
   const { toast } = useToast()
+
+  // 控制body滚动
+  useEffect(() => {
+    if (isDesigning) {
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+      document.documentElement.style.overflow = 'auto'
+    }
+    
+    // 清理函数
+    return () => {
+      document.body.style.overflow = 'auto'
+      document.documentElement.style.overflow = 'auto'
+    }
+  }, [isDesigning])
 
   // 模拟数据
   useEffect(() => {
@@ -234,42 +253,48 @@ export function DataCard({ title, value, change, icon }: DataCardProps) {
   }
 
   const ComponentCard = ({ component }: { component: ComponentData }) => (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <CardTitle className="text-lg">{component.name}</CardTitle>
-              <Badge variant={component.status === 'published' ? 'default' : 'secondary'}>
-                {component.status === 'published' ? '已发布' : 
-                 component.status === 'draft' ? '草稿' : '已归档'}
-              </Badge>
+    <Card className="group hover:shadow-lg transition-all duration-200 border-gray-200 hover:border-gray-300">
+      <CardContent className="p-6">
+        <div className="space-y-4">
+          {/* 组件头部 */}
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="font-semibold text-gray-900">{component.name}</h3>
+                <Badge 
+                  variant={component.status === 'published' ? 'default' : 'secondary'}
+                  className="text-xs"
+                >
+                  {component.status === 'published' ? '已发布' : 
+                   component.status === 'draft' ? '草稿' : '已归档'}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {component.description || '暂无描述'}
+              </p>
             </div>
-            <CardDescription className="line-clamp-2">
-              {component.description}
-            </CardDescription>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+          
           {/* 标签 */}
           <div className="flex flex-wrap gap-1">
-            {component.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs">
+            {component.tags.slice(0, 2).map((tag) => (
+              <span 
+                key={tag} 
+                className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700"
+              >
                 {tag}
-              </Badge>
+              </span>
             ))}
-            {component.tags.length > 3 && (
-              <Badge variant="outline" className="text-xs">
-                +{component.tags.length - 3}
-              </Badge>
+            {component.tags.length > 2 && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-500">
+                +{component.tags.length - 2}
+              </span>
             )}
           </div>
 
-          {/* 统计信息 */}
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <div className="flex items-center gap-3">
+          {/* 统计和操作 */}
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+            <div className="flex items-center gap-4 text-xs text-gray-500">
               <span className="flex items-center gap-1">
                 <Eye className="h-3 w-3" />
                 {component.usageCount}
@@ -278,26 +303,16 @@ export function DataCard({ title, value, change, icon }: DataCardProps) {
                 <Star className="h-3 w-3" />
                 {component.likes}
               </span>
+              <span>{component.updatedAt}</span>
             </div>
-            <span>{component.updatedAt}</span>
-          </div>
-
-          {/* 操作按钮 */}
-          <div className="flex gap-2 pt-2">
+            
             <Button 
               size="sm" 
-              variant="outline" 
-              className="flex-1"
+              variant="ghost"
               onClick={() => handleEditComponent(component)}
+              className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-600 hover:text-blue-700 hover:bg-blue-50"
             >
-              <Edit className="mr-1 h-3 w-3" />
-              编辑
-            </Button>
-            <Button size="sm" variant="outline">
-              <Copy className="h-3 w-3" />
-            </Button>
-            <Button size="sm" variant="outline">
-              <Share className="h-3 w-3" />
+              <Edit className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -307,29 +322,41 @@ export function DataCard({ title, value, change, icon }: DataCardProps) {
 
   if (isDesigning) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">
-              {selectedComponent ? `编辑 ${selectedComponent.name}` : '创建新组件'}
-            </h1>
-            <p className="text-muted-foreground">
-              使用代码编辑器和预览功能设计你的组件
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setIsDesigning(false)}>
-              取消
-            </Button>
-            <Button onClick={() => handleSaveComponent(selectedComponent?.code || '')}>
-              保存到工作区
-            </Button>
+      <div className="fixed inset-0 flex flex-col overflow-hidden bg-white">
+        <div className="bg-white border-b border-gray-100 px-6 py-3 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900">
+                {selectedComponent ? selectedComponent.name : '新组件'}
+              </h1>
+              <p className="text-sm text-gray-500 mt-1">
+                {selectedComponent ? '编辑组件代码和样式' : '创建你的第一个组件'}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setIsDesigning(false)}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                取消
+              </Button>
+              <Button 
+                size="sm"
+                onClick={() => handleSaveComponent(selectedComponent?.code || '')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4"
+              >
+                保存组件
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2 h-[800px]">
-          {/* 左侧代码编辑器 */}
-          <CodeEditor
+        <div className={`flex-1 grid gap-3 p-4 transition-all duration-300 overflow-hidden ${showRightPanel ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}>
+          {/* 代码编辑器 */}
+          <div className="h-full rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+            <CodeEditor
             initialCode={selectedComponent?.code || `import React from 'react'
 
 export function MyComponent() {
@@ -347,69 +374,107 @@ export function MyComponent() {
                 setSelectedComponent({ ...selectedComponent, code })
               }
             }}
-          />
+            onAIAssist={(code) => {
+              // AI助手回调处理
+              console.log('AI助手分析代码:', code)
+            }}
+            showRightPanel={showRightPanel}
+            onToggleRightPanel={() => setShowRightPanel(!showRightPanel)}
+            />
+          </div>
 
-          {/* 右侧预览区域 */}
-          <CodePreview
-            code={selectedComponent?.code || ''}
-            language="typescript"
-            fileName={selectedComponent?.name + '.tsx' || 'MyComponent.tsx'}
-          />
+          {/* 预览、AI助手和分析 */}
+          {showRightPanel && (
+            <div className="h-full rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+              <CodePreview
+                code={selectedComponent?.code || ''}
+                language="typescript"
+                fileName={selectedComponent?.name + '.tsx' || 'MyComponent.tsx'}
+                aiAssistant={
+                  <AIAssistant
+                    code={selectedComponent?.code || ''}
+                    language="typescript"
+                    fileName={selectedComponent?.name + '.tsx' || 'MyComponent.tsx'}
+                    onCodeSuggestion={(suggestion) => {
+                      if (selectedComponent) {
+                        const newCode = selectedComponent.code + '\n\n' + suggestion
+                        setSelectedComponent({ ...selectedComponent, code: newCode })
+                      }
+                    }}
+                  />
+                }
+              />
+            </div>
+          )}
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">我的个人工作区</h1>
-          <p className="text-muted-foreground">
-            管理和设计你的组件库
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Settings className="mr-2 h-4 w-4" />
-            设置
-          </Button>
-          <Button onClick={handleCreateComponent}>
-            <Plus className="mr-2 h-4 w-4" />
-            创建组件
-          </Button>
+    <div className="space-y-8">
+      {/* 头部区域 */}
+      <div className="bg-white border-b border-gray-100 px-6 py-6 -mx-6 -mt-6 mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-semibold text-gray-900">我的工作区</h1>
+            <p className="text-gray-600 mt-2">
+              设计和管理你的组件库
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              设置
+            </Button>
+            <Button 
+              onClick={handleCreateComponent}
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              创建组件
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* 搜索和筛选 */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="搜索组件..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4 flex-1">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="搜索组件..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          
+          <select
+            className="h-10 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            {categories.map(category => (
+              <option key={category} value={category}>
+                {category === 'all' ? '全部分类' : category}
+              </option>
+            ))}
+          </select>
         </div>
-        
-        <select
-          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          {categories.map(category => (
-            <option key={category} value={category}>
-              {category === 'all' ? '全部分类' : category}
-            </option>
-          ))}
-        </select>
 
-        <div className="flex border rounded-md">
+        <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
           <Button
             size="sm"
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             onClick={() => setViewMode('grid')}
+            className={`rounded-none ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'hover:bg-gray-50'}`}
           >
             <Grid className="h-4 w-4" />
           </Button>
@@ -417,6 +482,7 @@ export function MyComponent() {
             size="sm"
             variant={viewMode === 'list' ? 'default' : 'ghost'}
             onClick={() => setViewMode('list')}
+            className={`rounded-none border-l ${viewMode === 'list' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'hover:bg-gray-50'}`}
           >
             <List className="h-4 w-4" />
           </Button>
@@ -434,19 +500,24 @@ export function MyComponent() {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="py-16">
-            <div className="flex flex-col items-center justify-center text-muted-foreground">
-              <Palette className="mb-4 h-16 w-16" />
-              <p>还没有组件</p>
-              <p className="text-sm mb-4">创建你的第一个组件开始设计</p>
-              <Button onClick={handleCreateComponent}>
-                <Plus className="mr-2 h-4 w-4" />
-                创建组件
-              </Button>
+        <div className="text-center py-20">
+          <div className="max-w-md mx-auto">
+            <div className="w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+              <Palette className="h-10 w-10 text-gray-400" />
             </div>
-          </CardContent>
-        </Card>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">还没有组件</h3>
+            <p className="text-gray-600 mb-6">
+              创建你的第一个组件，开始构建专属的组件库
+            </p>
+            <Button 
+              onClick={handleCreateComponent}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              创建第一个组件
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   )
